@@ -1,54 +1,51 @@
-const mainInput = document.querySelector('.input1');
-const taskList = document.querySelector('.task-list');
+const mainInput = document.querySelector('.input1')
+const taskList = document.querySelector('.task-list')
 const btnPush = document.querySelector('.push')
 const checkAll = document.querySelector('#cat')
-const tasksList = document.querySelector('.tasks')
+// const tasksList = document.querySelector('.tasks')
 const dac = document.querySelector('#DAC')
-const cb = document.getElementById('cat');
-const countAll = document.querySelector('.countAll');
-const countCompl = document.querySelector('.countCompl');
-const countNotCompl = document.querySelector('.countNotCompl');
-const btns = document.querySelector('.buttons');
+const cb = document.getElementById('cat')
+const countAll = document.querySelector('.countAll')
+const countCompl = document.querySelector('.countCompl')
+const countNotCompl = document.querySelector('.countNotCompl')
+const btns = document.querySelector('.buttons')
 
-let arrTasks = [];
+let arrTasks = []
 
 mainInput.addEventListener('keyup', function (event) {
   if (event.keyCode === 13) {
-    event.preventDefault();
+    event.preventDefault()
     btnPush.click()
-    // Render(arrTasks)
   }
 }
 )
 
 btnPush.onclick = () => {
   addTask(mainInput.value, arrTasks)
-  mainInput.value = '';
-  mainInput.focus();
-  Render(arrTasks);
+  mainInput.value = ''
+  mainInput.focus()
+  Render(arrTasks)
   if (arrTasks.length > 5) {
     selectButton(arrTasks[arrTasks.length - 1].page, arrTasks)
   }
   function selectButton(id, arr) {
-    let q;
+    let q
     arr.forEach((task) => {
       if (task.page == id) {
-        q = arr.filter(filter5);
-        console.log(q);
+        q = arr.filter(filter5)
       }
     })
     function filter5(task) {
       if (task.page == id) {
-        return true;
+        return true
       }
     }
-    Render(q);
+    Render(q)
   }
-
 
   pageButtons(arrTasks)
   function pageButtons(arr) {
-    let n = (arr[arr.length - 1].page)
+    const n = (arr[arr.length - 1].page)
     if ((arr.length % 5) - 1 == 0) {
       btns.innerHTML += `<button class='changer' id='${n}'>${(arr.length / 5) + 0.8}</button>`
     }
@@ -60,93 +57,109 @@ function addTask(text, arr) {
     id: Date.now(),
     value: text,
     isComplete: false,
-    page: (Math.floor((arr.length) / 5)),
+    page: (Math.floor((arr.length) / 5))
   }
-  arr.push(task);
+  arr.push(task)
 }
 
 function pageUpdater() {
-  arrTasks.forEach((task) => {
-    let i = 0;
-    task.page = Math.floor(arrTasks.length[this] / 5)
+  arrTasks.forEach((task, idx) => {
+    task.page = Math.floor(idx / 5)
   })
+}
+function pageDelete() {
+  if ((arrTasks.length % 5) == 0) {
+    btns.removeChild(btns.lastChild)
+  }
 }
 
 function Render(arr) {
-  taskList.innerHTML = '';
+  taskList.innerHTML = ''
   arr.forEach((task) => {
-    const cls = task.isComplete ? "task task-complete" : "task";
-    const checked = task.isComplete ? "checked" : "";
+    const cls = task.isComplete ? 'task task-complete' : 'task'
+    const checked = task.isComplete ? 'checked' : ''
     taskList.innerHTML += `<li id="${task.id}" class="${cls} ${task.page}">
     <input id="cbone" class="todo-checkbox" type="checkbox" name="cb" ${checked}><input id='qwe' type='text' value='111' hidden><p>${task.value}</p><button class="btn-delete">X</button>
   </li>`
   }
-  );
+  )
   const isAllComplete = arrTasks.every(arrTasks => {
     return arrTasks.isComplete
   })
   if (isAllComplete == true) {
-    cb.checked = 'checked';
+    cb.checked = 'checked'
   } else {
-    cb.checked = '';
+    cb.checked = ''
+  }
+  if (arr.length == 0) {
+    cb.checked = ''
   }
   taskCount(arrTasks)
 
   btns.onclick = (event) => {
-    const target = event.target;
-    const isButton = target.classList.contains('changer');
+    const target = event.target
+    const isButton = target.classList.contains('changer')
     if (isButton) {
-      let buttonId = target.getAttribute('id');
-      selectButton(buttonId, arrTasks);
+      const buttonId = target.getAttribute('id')
+      selectButton(buttonId, arrTasks)
     }
   }
 
-  let q;
+  let q
   function selectButton(id, arr) {
     arr.forEach((task) => {
       if (task.page == id) {
-        q = arr.filter(filter5);
-        console.log(q);
+        q = arr.filter(filter5)
       }
     })
     function filter5(task) {
       if (task.page == id) {
-        return true;
+        return true
       }
     }
-    Render(q);
+    Render(q)
   }
 
-
-
-  // for (let el of document.getElementsByTagName('p')) {
-  //   el.onclick = function (e) {
-  //     // e.target.innerText
-  //     let target = e.target;
-  //     elId = el.parentElement.getAttribute('id');
-  //     target.innerHTML = `<input type='text' value='${el.innerText}'>`
-  //     console.log(elId)
-  //   }
-  // }
+  for (const el of document.getElementsByTagName('p')) {
+    el.onclick = function (e) {
+      const target = e.target
+      elId = el.parentElement.getAttribute('id')
+      target.innerHTML = `<input type='text' id='inpval' value='${el.innerText}'>`
+      console.log(elId)
+      target.addEventListener('keyup', function (event) {
+        if (event.keyCode === 13) {
+          event.preventDefault()
+          const inp = document.getElementById('inpval')
+          el.innerHTML = inp.value
+          arrTasks.forEach((task) => {
+            if (task.id == elId) {
+              task.value = inp.value
+            }
+          })
+        }
+      }
+      )
+    }
+  }
 }
 
-
-
 taskList.onclick = (event) => {
-  const target = event.target;
-  const isCheckboxEl = target.classList.contains('todo-checkbox');
-  const isDeleteEl = target.classList.contains('btn-delete');
+  const target = event.target
+  const isCheckboxEl = target.classList.contains('todo-checkbox')
+  const isDeleteEl = target.classList.contains('btn-delete')
   if (isDeleteEl) {
-    const task = target.parentElement;
-    const taskId = task.getAttribute("id");
-    deleteTask(taskId, arrTasks);
-    Render(arrTasks);
+    const task = target.parentElement
+    const taskId = task.getAttribute('id')
+    deleteTask(taskId, arrTasks)
+    Render(arrTasks)
+    btns.lastChild.click()
   }
   if (isCheckboxEl) {
-    const task = target.parentElement;
-    const taskId = task.getAttribute('id');
-    taskStatus(taskId, arrTasks);
-    Render(arrTasks);
+    const task = target.parentElement
+    const taskId = task.getAttribute('id')
+    taskStatus(taskId, arrTasks)
+    Render(arrTasks)
+    btns.firstElementChild.click()
   }
 }
 
@@ -157,6 +170,7 @@ function deleteTask(id, arr) {
     }
   })
   pageUpdater()
+  pageDelete()
 }
 function taskStatus(id, arr) {
   arr.forEach((task) => {
@@ -167,53 +181,54 @@ function taskStatus(id, arr) {
 }
 
 checkAll.onclick = () => {
-  completeAll(arrTasks);
-  Render(arrTasks);
+  completeAll(arrTasks)
+  Render(arrTasks)
+  btns.firstElementChild.click()
 }
 
 function completeAll(arr) {
   arr.forEach((task) => {
     if (cb.checked) {
-      task.isComplete = true;
-    }
-    else {
-      task.isComplete = false;
+      task.isComplete = true
+    } else {
+      task.isComplete = false
     }
   })
-  // Render(arrTasks)
 }
 
 dac.onclick = () => {
   arrTasks = arrTasks.filter(filterByIsComplete)
-  Render(arrTasks);
+  Render(arrTasks)
+  // while (btns.firstElementChild) {
+  //   btns.removeChild(btns.firstElementChild)
+  // }
+  while ((arrTasks.length % 5) == 0) {
+    btns.removeChild(btns.lastChild)
+    // if (btns.childElementCount == 1) break
+    if (arrTasks.length > 0) break
+  }
+  pageUpdater()
 }
 
 function filterByIsComplete(task) {
   if (task.isComplete !== true) {
-    return task;
+    return task
   }
-  // return false
-}
-
-function allCheckboxStatus() {
-  const isAllComplete = arrTasks.every(arrTasks => {
-    return arrTasks.isComplete
-  })
 }
 
 function filterCountComplete(task) {
   if (task.isComplete == true) {
-    return task;
+    return task
   }
 }
 function filterNotComplete(task) {
   if (task.isComplete !== true) {
-    return task;
+    return task
   }
 }
 function taskCount(arr) {
-  const complArr = arr.filter(filterCountComplete);
-  const notComplArr = arr.filter(filterNotComplete);
+  const complArr = arr.filter(filterCountComplete)
+  const notComplArr = arr.filter(filterNotComplete)
   countCompl.innerText = `Completed(${complArr.length})`
   countAll.innerText = `All(${arr.length})`
   countNotCompl.innerText = `Not Completed(${notComplArr.length})`
@@ -221,7 +236,6 @@ function taskCount(arr) {
 
 +function () {
   function selecPanel(e) {
-    // console.dir(e.target.dataset.target)
     const target = e.target;
     const isTabAll = target.classList.contains('countAll')
     const isTabCompl = target.classList.contains('countCompl')
